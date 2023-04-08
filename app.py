@@ -1,5 +1,6 @@
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
+import torchvision.models as models
 
 
 data_transforms = transforms.Compose([

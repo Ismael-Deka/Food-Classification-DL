@@ -1,4 +1,6 @@
-## Step to run for first time
+## Steps to run for first time
+
+### Download Image dataset [here](https://drive.google.com/file/d/1eeGF1GQc97_YIwdqewt6nPmob1bNr7M5) and save in repo folder.
 
 ### `pip3 install torch` - install pytorch
 

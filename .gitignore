@@ -1,2 +1,4 @@
 /dataset
 *.pickle
+*.pth
+*.png

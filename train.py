@@ -1,3 +1,4 @@
+from stat_utils import get_class_accuracy, plot_confusion_matrix
 from sklearn.metrics import confusion_matrix
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
@@ -14,7 +15,7 @@ batch_size = 32
 num_epochs = 10
 
 
-print("Loading dataset...")
+print("\nLoading dataset...")
 
 data_transforms = transforms.Compose([
     transforms.ToTensor(),
@@ -89,15 +90,17 @@ criterion = torch.nn.CrossEntropyLoss()
 
 
 train_loss_history = []
-train_acc_history = []
+train_acc_epoch_history = []
+train_acc_batch_history = []
 y_pred = []
 y_true = []
-
+print("Starting Training...")
 print("\n---------------------------------------------")
 print("Number of Epochs: %d" % num_epochs)
 print("Batch Size: %d" % batch_size)
 print("Learning rate: %.3f" % learn_rate)
-print("\nStarting Training...")
+print("---------------------------------------------\n")
+
 for epoch in range(num_epochs):
     resnet50.train() # Puts the model to train mode
     train_loss = 0
@@ -130,13 +133,16 @@ for epoch in range(num_epochs):
         train_acc = train_correct.double() / len(train_loader.dataset) #Calculates accuracy
 
         train_loss_history.append(train_loss) #Saves a list of the loss for each batch to be plotted when training is complete
+        train_acc_batch_history.append(train_acc)#Saves a list of the accuracy for each epoch
 
         # Print training results for this batch
         print('Epoch %d - (Batch %d): Training Loss: %.4f, Training Acc: %.4f' % (epoch+1,batch_count,train_loss, train_acc))
         batch_count+=1
 
-    train_acc_history.append(train_acc)#Saves a list of the accuracy for each epoch to be plotted when training and validation is complete
+    train_acc_epoch_history.append(train_acc)#Saves a list of the accuracy for each epoch to be plotted when training is complete
 
+cm = confusion_matrix(y_true=y_true,y_pred=y_pred)
+class_acc = get_class_accuracy(y_true=y_true, y_pred=y_pred, num_classes=num_classes)
 
 print("\n\nTraining Complete!")
 print("----------------------------------------------")
@@ -147,6 +153,12 @@ print("Learning rate: %.3f" % learn_rate)
 
 print("\nTraining Loss: %.4f" % train_loss)
 print("Training Accuracy: %.2f%%" % (train_acc*100))
+print("----------------------------------------------")
+print("\nClass-wise Accuracy")
+print("----------------------------------------------")
+for i in range(num_classes):
+    print("\"%s\" Accuracy: %.2f%%" % (classes[i], class_acc[i]))
+print("----------------------------------------------")
 
 if os.path.exists("train_results") is not True:
     os.mkdir("train_results")
@@ -162,14 +174,39 @@ plt.savefig("train_results/train_loss.png")
 
 plt.clf()
 
-plt.plot(train_acc_history)
+plt.plot(train_acc_epoch_history)
 plt.title('Training Accuracy History')
 plt.xlabel('Epochs')
 plt.ylabel('Training Accuracy')
 
 plt.savefig("train_results/train_acc.png")
 
-print("Training data saved to \"train_results\"")
+#Makes and saves a confusion matrix
+plot_confusion_matrix(cm, num_classes, classes) #imported from stat_utils.py
+plt.savefig('train_results/confusion_matrix.png')
+
+with open('train_results/training_summary.txt', "w") as f:
+    f.write("Training Summary\n")
+    f.write("----------------------------------------------\n")
+    f.write("Number of Epochs: %d\n" % num_epochs)
+    f.write("Number of Batches per Epoch: %d\n" % (batch_count-1))
+    f.write("Batch Size: %d\n" % batch_size)
+    f.write("\nTotal Training Loss: %.4f\n" % train_loss)
+    f.write("Total Training Accuracy: %.2f%%\n" % (train_acc*100))
+    f.write("----------------------------------------------\n")
+    f.write("\nClass-wise Accuracy\n")
+    f.write("----------------------------------------------\n")
+    for i in range(num_classes):
+        f.write("\"%s\" Accuracy: %.2f%%\n" % (classes[i], class_acc[i]))
+    f.write("----------------------------------------------\n")
+    f.write("\nTraining History\n")
+    f.write("----------------------------------------------\n")
+    for epoch in range(num_epochs):
+        for batch in range((batch_count-1)):
+            f.write('Epoch %d - (Batch %d): Training Loss: %.4f, Training Acc: %.4f\n' 
+                    % (epoch+1,batch+1,train_loss_history[epoch+batch], train_acc_batch_history[epoch+batch]))
+
+print("Training data saved to \"train_results\" folder")
 print("Saving fine-tuned model...")
 
 if os.path.exists("model") is not True:

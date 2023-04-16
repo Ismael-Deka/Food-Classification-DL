@@ -1,14 +1,14 @@
+from stat_utils import get_class_accuracy, plot_confusion_matrix
 from sklearn.metrics import confusion_matrix
 import torchvision.models as models
 import matplotlib.pyplot as plt
 import pickle as pk
-import numpy as np
 import torch
 import sys
 import os
 
 
-print("Loading validation dataset...")
+print("\nLoading validation dataset...")
 
 try:
     with open('pickle/validate.pkl', 'rb') as handle:
@@ -56,7 +56,7 @@ print("Starting evaluation...")
 print("\n---------------------------------------------")
 print("Number of Epochs: %d" % num_epochs)
 print("Batch Size: %d" % batch_size)
-
+print("---------------------------------------------\n")
 for epoch in range(num_epochs):
     #Validation
     model.eval()# Puts the model to evaluation mode
@@ -83,55 +83,60 @@ for epoch in range(num_epochs):
             val_acc = val_correct.double() / len(val_loader.dataset)
 
             val_loss_history.append(val_loss) #Saves a list of the loss for each batch to be plotted following validation
+            val_acc_history.append(val_acc)#Saves a list of the accuracy for each batch to be plotted when validation is complete
             print('Epoch %d - (Batch %d): Validation Loss: %.4f, Valiation Acc: %.4f' % (epoch+1,batch_count,val_loss, val_acc))
             batch_count+=1
-    val_acc_history.append(val_acc)#Saves a list of the accuracy for each epoch to be plotted when training and validation is complete
+    
 
 if os.path.exists("val_results") is not True:
     os.mkdir("val_results")
 
 cm = confusion_matrix(y_true=y_true,y_pred=y_pred)
+class_acc = get_class_accuracy(y_true=y_true, y_pred=y_pred,num_classes=num_classes)
+
 
 print("\n\nEvaluation Complete!")
+print("\nValidation Summary")
 print("----------------------------------------------")
 print("Number of Epochs: %d" % num_epochs)
 print("Number of Batches per Epoch: %d" % (batch_count-1))
 print("Batch Size: %d" % batch_size)
 
-print("\nValidation Loss: %.4f" % val_loss)
-print("Validation Accuracy: %.2f%%" % (val_acc*100))
+print("\nTotal Validation Loss: %.4f" % val_loss)
+print("Total Validation Accuracy: %.2f%%" % (val_acc*100))
+print("----------------------------------------------")
+print("\nClass-wise Accuracy")
+print("----------------------------------------------")
+for i in range(num_classes):
+    print("\"%s\" Accuracy: %.2f%%" % (classes[i], class_acc[i]))
+print("----------------------------------------------")
 
 print("\nPlotting Validation data...")
 
-plt.plot(val_loss_history)
-plt.title('Validation Loss History')
-plt.xlabel('Batches')
-plt.ylabel('Validation loss')
-
-plt.savefig("val_results/val_loss.png")
-
-plt.clf()
-
-plt.plot(val_acc_history)
-plt.title('Validation Accuracy History')
-plt.xlabel('Epochs')
-plt.ylabel('Validation Accuracy')
-
-plt.savefig("val_results/val_acc.png")
-
-plt.clf()
-
-fig, ax = plt.subplots(figsize=(num_classes, num_classes))
-ax.imshow(cm, cmap=plt.cm.Blues)
-ax.set_title('Validation Confusion matrix')
-tick_marks = np.arange(num_classes)
-ax.set_xticks(tick_marks)
-ax.set_yticks(tick_marks)
-ax.set_xticklabels(classes, rotation=45)
-ax.set_yticklabels(classes)
-ax.set_ylabel('True label')
-ax.set_xlabel('Predicted label')
-for i in range(num_classes):
-    for j in range(num_classes):
-        ax.text(j, i, str(cm[i][j]), ha='center', va='center', color='white')
+#Makes and saves a confusion matrix
+plot_confusion_matrix(cm, num_classes, classes) #imported from stat_utils.py
 plt.savefig('val_results/confusion_matrix.png')
+
+with open('val_results/val_summary.txt', "w") as f:
+    f.write("Validation Summary\n")
+    f.write("----------------------------------------------\n")
+    f.write("Number of Epochs: %d\n" % num_epochs)
+    f.write("Number of Batches per Epoch: %d\n" % (batch_count-1))
+    f.write("Batch Size: %d\n" % batch_size)
+    f.write("\nTotal Validation Loss: %.4f\n" % val_loss)
+    f.write("Total Validation Accuracy: %.2f%%\n" % (val_acc*100))
+    f.write("----------------------------------------------\n")
+    f.write("\nClass-wise Accuracy\n")
+    f.write("----------------------------------------------\n")
+    for i in range(num_classes):
+        f.write("\"%s\" Accuracy: %.2f%%\n" % (classes[i], class_acc[i]))
+    f.write("----------------------------------------------\n")
+    f.write("\nValidation History\n")
+    f.write("----------------------------------------------\n")
+    for epoch in range(num_epochs):
+        for batch in range((batch_count-1)):
+            f.write('Epoch %d - (Batch %d): Validation Loss: %.4f, Valiation Acc: %.4f\n' 
+                    % (epoch+1,batch+1,val_loss_history[epoch+batch], val_acc_history[epoch+batch]))
+
+print("\nValidation data saved to \"val_results\" folder")
+print("\nPlease run test.py to test model.")

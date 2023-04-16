@@ -27,9 +27,11 @@ This project requires the following packages:
 - PyTorch 2.0.0
 - TorchVision 0.15.1
 - Matplotlib 3.5.1
+- scikit-learn 1.1.2
+- Numpy 1.23.5
 
 ## Results
-After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 92.71% on the train set(as of 04/14/2023).
+After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 92.9% on the train set and 91.67% on the validation set(as of 04/16/2023).
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

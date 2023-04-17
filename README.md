@@ -32,7 +32,18 @@ This project requires the following packages:
 - Pytorch GradCAM 1.4.6
 
 ## Results
-After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 93.1% on the train set, 91.33% on the validation set, and 93.67% on the test set(as of 04/17/2023).
+After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 93.1% on the train set, 91.33% on the validation set, and 93.67% on the test set(as of 04/17/2023). Class-wise accuracies following test are as follows:
+
+- Burger Accuracy: 98.72%
+- Cake Accuracy: 85.48%
+- Cookie Accuracy: 94.83%
+- Fries Accuracy: 92.16%
+- Hotdog Accuracy: 95.92%
+- Pizza Accuracy: 92.86%
+- Salad Accuracy: 95.24%
+- Shrimp Accuracy: 95.92%
+- Steak Accuracy: 96.55%
+- Sushi Accuracy: 88.71%
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

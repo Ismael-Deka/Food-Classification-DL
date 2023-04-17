@@ -135,7 +135,7 @@ with open('val_results/val_summary.txt', "w") as f:
     f.write("\nValidation History\n")
     f.write("----------------------------------------------\n")
     for epoch in range(num_epochs):
-        for batch in range((batch_count-1)):
+        for batch in range((batch_count)):
             f.write('Epoch %d - (Batch %d): Validation Loss: %.4f, Valiation Acc: %.4f\n' 
                     % (epoch+1,batch+1,val_loss_history[(epoch*batch_count)+batch], val_acc_history[(epoch*batch_count)+batch]))
 

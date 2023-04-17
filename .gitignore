@@ -1,7 +1,9 @@
+/__pycache__
 /dataset
 /train_results
 /val_results
 /test_results
+/pic_heatmaps
 /model
 /pickle
 *.pickle

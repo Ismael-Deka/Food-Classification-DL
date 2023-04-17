@@ -40,7 +40,7 @@ train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset
 # Create data loaders for training, validation, and test sets with a batch size of 32
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-test_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 if os.path.exists("pickle") is not True:
     os.mkdir("pickle")
@@ -105,11 +105,12 @@ for epoch in range(num_epochs):
     resnet50.train() # Puts the model to train mode
     train_loss = 0
     train_correct = 0
-    batch_count = 1
+    batch_count = 0
 
 
     #Training
     for inputs, labels in train_loader:
+        batch_count+=1
         inputs = inputs.to(device) #loads input on to GPU if available
         labels = labels.to(device) #loads labels on to GPU if available
         
@@ -133,11 +134,11 @@ for epoch in range(num_epochs):
         train_acc = train_correct.double() / len(train_loader.dataset) #Calculates accuracy
 
         train_loss_history.append(train_loss) #Saves a list of the loss for each batch to be plotted when training is complete
-        train_acc_batch_history.append(train_acc)#Saves a list of the accuracy for each epoch
+        train_acc_batch_history.append(train_acc)#Saves a list of the accuracy for each batch
 
         # Print training results for this batch
         print('Epoch %d - (Batch %d): Training Loss: %.4f, Training Acc: %.4f' % (epoch+1,batch_count,train_loss, train_acc))
-        batch_count+=1
+        
 
     train_acc_epoch_history.append(train_acc)#Saves a list of the accuracy for each epoch to be plotted when training is complete
 
@@ -147,7 +148,7 @@ class_acc = get_class_accuracy(y_true=y_true, y_pred=y_pred, num_classes=num_cla
 print("\n\nTraining Complete!")
 print("----------------------------------------------")
 print("Number of Epochs: %d" % num_epochs)
-print("Number of Batches per Epoch: %d" % (batch_count-1))
+print("Number of Batches per Epoch: %d" % (batch_count))
 print("Batch Size: %d" % batch_size)
 print("Learning rate: %.3f" % learn_rate)
 
@@ -189,7 +190,7 @@ with open('train_results/training_summary.txt', "w") as f:
     f.write("Training Summary\n")
     f.write("----------------------------------------------\n")
     f.write("Number of Epochs: %d\n" % num_epochs)
-    f.write("Number of Batches per Epoch: %d\n" % (batch_count-1))
+    f.write("Number of Batches per Epoch: %d\n" % (batch_count))
     f.write("Batch Size: %d\n" % batch_size)
     f.write("\nTotal Training Loss: %.4f\n" % train_loss)
     f.write("Total Training Accuracy: %.2f%%\n" % (train_acc*100))
@@ -202,9 +203,9 @@ with open('train_results/training_summary.txt', "w") as f:
     f.write("\nTraining History\n")
     f.write("----------------------------------------------\n")
     for epoch in range(num_epochs):
-        for batch in range((batch_count-1)):
+        for batch in range((batch_count)):
             f.write('Epoch %d - (Batch %d): Training Loss: %.4f, Training Acc: %.4f\n' 
-                    % (epoch+1,batch+1,train_loss_history[epoch+batch], train_acc_batch_history[epoch+batch]))
+                    % (epoch+1,batch+1,train_loss_history[(epoch*batch_count)+batch], train_acc_batch_history[(epoch*batch_count)+batch]))
 
 print("Training data saved to \"train_results\" folder")
 print("Saving fine-tuned model...")

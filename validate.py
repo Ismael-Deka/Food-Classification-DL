@@ -18,7 +18,7 @@ try:
         num_epochs = pk.load(handle)
         classes = pk.load(handle)
 except FileNotFoundError:
-    print("Test dataset not found. Please run train.py before running evaluation.")
+    print("Validation dataset not found. Please run train.py before running evaluation.")
     sys.exit()
 
 print("Loading fine-tuned model...")
@@ -62,9 +62,10 @@ for epoch in range(num_epochs):
     model.eval()# Puts the model to evaluation mode
     val_loss = 0
     val_correct = 0
-    batch_count = 1
+    batch_count = 0
     with torch.no_grad():
         for inputs, labels in val_loader:
+            batch_count+=1
             inputs = inputs.to(device)
             labels = labels.to(device)
 
@@ -85,7 +86,7 @@ for epoch in range(num_epochs):
             val_loss_history.append(val_loss) #Saves a list of the loss for each batch to be plotted following validation
             val_acc_history.append(val_acc)#Saves a list of the accuracy for each batch to be plotted when validation is complete
             print('Epoch %d - (Batch %d): Validation Loss: %.4f, Valiation Acc: %.4f' % (epoch+1,batch_count,val_loss, val_acc))
-            batch_count+=1
+            
     
 
 if os.path.exists("val_results") is not True:
@@ -99,7 +100,7 @@ print("\n\nEvaluation Complete!")
 print("\nValidation Summary")
 print("----------------------------------------------")
 print("Number of Epochs: %d" % num_epochs)
-print("Number of Batches per Epoch: %d" % (batch_count-1))
+print("Number of Batches per Epoch: %d" % (batch_count))
 print("Batch Size: %d" % batch_size)
 
 print("\nTotal Validation Loss: %.4f" % val_loss)
@@ -121,7 +122,7 @@ with open('val_results/val_summary.txt', "w") as f:
     f.write("Validation Summary\n")
     f.write("----------------------------------------------\n")
     f.write("Number of Epochs: %d\n" % num_epochs)
-    f.write("Number of Batches per Epoch: %d\n" % (batch_count-1))
+    f.write("Number of Batches per Epoch: %d\n" % (batch_count))
     f.write("Batch Size: %d\n" % batch_size)
     f.write("\nTotal Validation Loss: %.4f\n" % val_loss)
     f.write("Total Validation Accuracy: %.2f%%\n" % (val_acc*100))
@@ -136,7 +137,7 @@ with open('val_results/val_summary.txt', "w") as f:
     for epoch in range(num_epochs):
         for batch in range((batch_count-1)):
             f.write('Epoch %d - (Batch %d): Validation Loss: %.4f, Valiation Acc: %.4f\n' 
-                    % (epoch+1,batch+1,val_loss_history[epoch+batch], val_acc_history[epoch+batch]))
+                    % (epoch+1,batch+1,val_loss_history[(epoch*batch_count)+batch], val_acc_history[(epoch*batch_count)+batch]))
 
 print("\nValidation data saved to \"val_results\" folder")
 print("\nPlease run test.py to test model.")

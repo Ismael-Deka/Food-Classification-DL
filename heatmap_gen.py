@@ -35,7 +35,7 @@ print("Loading fine-tuned model...")
 try:
     model_dict = torch.load("model/resnet50_food_classification_trained.pth")
 except FileNotFoundError:
-    print("Fine-tuned model not found. Please run train.py before running.")
+    print("Fine-tuned model not found. Please run train.py before running heatmap generator.")
     sys.exit()
 
 model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)

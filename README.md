@@ -29,7 +29,6 @@ This project requires the following packages:
 - Matplotlib 3.5.1
 - scikit-learn 1.1.2
 - Numpy 1.23.5
-- Pytorch GradCAM 1.4.6
 
 ## Results
 After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 93.1% on the train set, 91.33% on the validation set, and 93.67% on the test set(as of 04/17/2023). Class-wise accuracies following test are as follows:

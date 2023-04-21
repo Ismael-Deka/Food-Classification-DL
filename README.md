@@ -31,18 +31,22 @@ This project requires the following packages:
 - Numpy 1.23.5
 
 ## Results
-After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 93.1% on the train set, 91.33% on the validation set, and 93.67% on the test set(as of 04/17/2023). Class-wise accuracies following test are as follows:
+After training the model for 10 epochs with a batch size of 32 and a learning rate of 0.001, we achieved an accuracy of 93.33% on the train set, 93.67% on the validation set, and 92.83% on the test set(as of 04/19/2023). Class-wise accuracies following test are as follows:
 
-- Burger Accuracy: 98.72%
-- Cake Accuracy: 85.48%
-- Cookie Accuracy: 94.83%
-- Fries Accuracy: 92.16%
-- Hotdog Accuracy: 95.92%
-- Pizza Accuracy: 92.86%
-- Salad Accuracy: 95.24%
-- Shrimp Accuracy: 95.92%
-- Steak Accuracy: 96.55%
-- Sushi Accuracy: 88.71%
+| Class  | Accuracy |
+ --- | --- |
+| Burger |  98.18% |
+| Cake |  81.48% |
+| Cookie |  95.31% |
+| Fries |  91.53% |
+| Hotdog |  95.31% |
+| Pizza |  89.36% |
+| Salad |  96.83% |
+| Shrimp |  90.91% |
+| Steak |  92.96% |
+| Sushi |  94.74% |
+
+![Test Confusion Matrix](https://imgur.com/RqcsgUq.png)
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

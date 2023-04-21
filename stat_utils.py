@@ -15,6 +15,7 @@ def get_class_accuracy(y_true, y_pred, num_classes):
     return class_acc
 
 def plot_confusion_matrix(cm, num_classes, classes):
+    print(cm)
     fig, ax = plt.subplots(figsize=(num_classes, num_classes))
     ax.imshow(cm, cmap=plt.cm.Blues)
     ax.set_title('Confusion matrix')
@@ -27,4 +28,7 @@ def plot_confusion_matrix(cm, num_classes, classes):
     ax.set_xlabel('Predicted label')
     for i in range(num_classes):
         for j in range(num_classes):
-            ax.text(j, i, str(cm[i][j]), ha='center', va='center', color='white')
+            percentage = cm[i][j]/sum(cm[i])*100
+            color = "white" if percentage > 50 else "black"
+            text = "%.1f%%" % ((cm[i][j]/sum(cm[i]))*100) if percentage > 0 else "-"
+            ax.text(j, i, text, ha='center', va='center', color=color)

@@ -49,6 +49,6 @@ After training the model for 10 epochs with a batch size of 32 and a learning ra
 ![Test Confusion Matrix](https://imgur.com/RqcsgUq.png)
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE).
 
  
